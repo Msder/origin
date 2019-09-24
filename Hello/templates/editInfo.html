@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+    <style>
+        .container-fluid{
+            background-color: #333;
+        }
+        #loginLink{
+            margin-right: 10px;
+        }
+        #iconInfo{
+            float: left;
+            margin-top: 10px;
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+        }
+
+        .fade.bottom{
+            width: 200px;
+        }
+        .popover-title{
+            height: 50px;
+            line-height: 36px;
+            font-size: 20px;
+            text-align: center;
+            {#text-align: center;#}
+        }
+        .popoverContent{
+            list-style: none;
+            padding-left: 0;
+        }
+        .popoverContent>li{
+            height: 28px;
+        }
+        .popoverContent>li>font{
+            line-height: 28px;
+        }
+        hr{
+            margin: 5px;
+        }
+
+
+        /*以下是编辑的信息标题样式*/
+        .titleForm{
+            margin-bottom: 10px;
+        }
+
+        .contentForm{
+            width: 100%;
+            height: 600px !important;
+            resize: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">玛瑞特</a>
+            </div>
+            <div>
+                <!--向左对齐-->
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="navbar-text navbar-left">在线考试</a>
+                <a class="navbar-text navbar-left" href="#">商城</a>
+                {% if editor == 1 %}
+                    <a class="navbar-text navbar-left" href="#">编辑</a>
+                {% endif %}
+                <!--向右对齐-->
+                {% if info == 'NoInfo' %}
+                    <a class="navbar-text navbar-right" id="loginLink" href="/login/">登录</a>
+                    <a class="navbar-text navbar-right" href="/editInfo/">注册</a>
+                {% else %}
+{#                    <span><i class="icono-pin navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/settingB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+{#                    <span><i class="icono-user navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/userB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+                {% endif %}
+
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center">尊敬的用户:{{ user }}</h4>
+                </div>
+                <div class="modal-body">请确认是否要登出</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="logout()">确定登出</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div>
+        <input type="text" class="form-control input-lg titleForm" placeholder="请输入标题，五十字内">
+        <textarea class="input-lg contentForm" style="text-indent: 2em"></textarea>
+        <button type="button" class="btn btn-info btn-block" style="height: 60px" onclick="uploadInfo()">提交</button>
+    </div>
+
+    <div>{{ data.1 }}</div>
+    <script>
+        $(function() {
+            $("[data-toggle='popover']").each(function() {
+                var element = $(this);
+                element.popover({
+                    trigger: 'manual',
+                    html: true,
+                    title: function() {
+                        return title();
+                    },
+                    placement: 'bottom',
+                    content: function() {
+                        return content();
+                    }
+                }).on("mouseenter", function() {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function() {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function() {
+                    var _this = this;
+                    setTimeout(function() {
+                        if(!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100000);
+                });
+
+            });
+
+        });
+        function title() {
+            var title = $("<img src='/static/img/account.png' id=\'iconInfo\' style=\'margin-top:2px\'>" + "<p style=\'float:left\'>{{ user }}<p>");
+            return title
+        }
+        function  content()  {
+            var  data  =  $(
+                "<form>" +
+                    "<ul class=\'popoverContent\'>" +
+                        "<li onclick=\'personalCenter()\'><span aria-hidden='true' class='icon_globe'></span>&nbsp;<img src='/static/img/center.png' id=\'iconInfo\' style=\'margin-top:0px\'><font>个人中心</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_piechart'></span>&nbsp;<font>关注:</font>265</li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_search_alt'></span>&nbsp;<font>微博:</font>645</li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_pens_alt'></span>&nbsp;<font>所在地:</font>台湾</li>"+
+                        "<hr>"+
+                        "<button type=\'button\' class=\'btn btn-warning\' data-toggle=\'modal\' data-target=\'#myModal\'>注销</button>"+
+                    "</ul>"+
+                "</form>");
+            return  data;
+        }
+        function  test()  {
+            alert('关注成功');
+        }
+        function logout() {
+            $.post('/logout/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'user': '{{ info }}',
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    location.href = '/';
+                }
+                else {
+                    alert('登出失败！');
+                }
+            });
+        }
+        function personalCenter() {
+            location.href = 'personalCenter/';
+        }
+
+
+        function uploadInfo() {
+            var title = $('.titleForm').val();
+            var content =$('.contentForm').val();
+            console.log(content);
+            $.post('/uploadInfo/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'title': title,
+                'content': content,
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    location.href = '/';
+                }
+                else {
+                    alert('编辑失败！');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

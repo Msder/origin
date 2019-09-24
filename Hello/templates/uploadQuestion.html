@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/normalize.css" />
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/general.css">
+    <link rel="stylesheet" href="/static/css/set_7.css">
+    <link rel="stylesheet" href="/static/css/uploadQuestionSetting.css">
+    <link rel="stylesheet" href="/static/css/jquery-labelauty.css">
+    <style>
+        .container-fluid{
+            background-color: #333;
+        }
+        #loginLink{
+            margin-right: 10px;
+        }
+        #iconInfo{
+            float: left;
+            margin-top: 10px;
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+        }
+        .container_odd{
+            background-color: #333;
+            width: 200px;
+            border-radius: 5px;
+            position: absolute;
+            bottom:0;
+            top: 60px;
+        }
+        .set_container{
+            width: 200px;
+        }
+        .set_7_btn-wrapper{
+            width: 200px;
+            {#background-color: #6F6F6F;#}
+            margin-top: 20px;
+        }
+        #set_7_text a{
+            color: #ffffff;
+        }
+        .fade.bottom{
+            width: 200px;
+        }
+        .popover-title{
+            height: 50px;
+            line-height: 36px;
+            font-size: 20px;
+            text-align: center;
+            {#text-align: center;#}
+        }
+        .popoverContent{
+            list-style: none;
+            padding-left: 0px;
+        }
+        .popoverContent>li{
+            height: 28px;
+        }
+        .popoverContent>li>font{
+            line-height: 28px;
+        }
+        hr{
+            margin: 5px;
+        }
+
+
+        /*以下是单选和多选框的特有性质*/
+        #judgeDowebok{
+            list-style-type: none;
+        }
+
+        #judgeDowebok li{
+            display: inline-block;
+            margin: 10px 0;
+        }
+        input.labelauty + label {
+            font: 12px "Microsoft Yahei";
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">玛瑞特</a>
+            </div>
+            <div>
+                <!--向左对齐-->
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="navbar-text navbar-left">在线考试</a>
+                <a class="navbar-text navbar-left" href="#">商城</a>
+                <!--向右对齐-->
+                {% if info == 'NoInfo' %}
+                    <a class="navbar-text navbar-right" id="loginLink" href="/login/">登录</a>
+                    <a class="navbar-text navbar-right" href="/register/">注册</a>
+                {% else %}
+{#                    <span><i class="icono-pin navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/settingB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+{#                    <span><i class="icono-user navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/userB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+                {% endif %}
+
+
+            </div>
+        </div>
+    </nav>
+	<div class="container_odd">
+        <div class="set_container">
+            <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                <rect id="set_7_button1" height="45" width="150" onclick="personalCenter()"></rect>
+                </svg>
+                <div id="set_7_text"> <a href="/personalCenter/">个人信息</a> </div>
+            </div>
+        <!--End of Button 1 -->
+            {% if power == 'admin' %}
+                <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                    <rect id="set_7_button2" height="45" width="150" onclick="listUser()"></rect>
+                    </svg>
+                    <div id="set_7_text"> <a href="/listUser/">权限设置</a> </div>
+                </div>
+            {% endif %}
+        <!--End of Button 2 -->
+            <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                <rect id="set_7_button3" height="45" width="150" onclick="setQuestion()"></rect>
+                </svg>
+                <div id="set_7_text"> <a href="/setQuestion/">自定义试卷</a> </div>
+            </div>
+            {% if power == 'admin' %}
+                <div class="set_7_btn-wrapper"> <svg height="45" width="150" style="background-color: #444444;">
+                    <rect id="set_7_button3" height="45" width="150" onclick="uploadQuestion()"></rect>
+                    </svg>
+                    <div id="set_7_text"> <a href="/uploadQuestion/">上传题目</a> </div>
+                </div>
+            {% endif %}
+            <!--End of Button 3 -->
+            <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                <rect id="set_7_button4" height="45" width="150" onclick="choosePage()"></rect>
+                </svg>
+                <div id="set_7_text"> <a href="/choosePage/">在线考试</a> </div>
+            </div>
+            <!--End of Button 4 -->
+            <div style="clear:both"></div>
+        </div>
+	</div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center">尊敬的用户:{{ info }}</h4>
+                </div>
+                <div class="modal-body">请确认是否要登出</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭1</button>
+                    <button type="button" class="btn btn-primary" onclick="logout()">确定登出</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+    <div id="uploadTitle">
+        <div class="panel-group" id="accordion">
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseTwo">
+                            单选请点击
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseTwo" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form method="post" enctype="multipart/form-data" id="singleForm">
+                            {% csrf_token %}
+                            <input type="text" id="titleText" class="form-control input-lg" placeholder="请输入文字题目" name="titleText">
+                            <p id="titleImgInfo">题目图片：</p>
+                            <input type="file" id="titleImg" name="titleImg">
+                            <input type="text" id="optionA" name="optionA" class="form-control input-lg" placeholder="请输入A选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项A图片：</p>
+                            <input type="file" id="optionAImg" name="optionAImg">
+                            <input type="text" id="optionB" name="optionB" class="form-control input-lg" placeholder="请输入B选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项B图片：</p>
+                            <input type="file" id="optionBImg" name="optionBImg">
+                            <input type="text" id="optionC"  name="optionC" class="form-control input-lg" placeholder="请输入C选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项C图片：</p>
+                            <input type="file" id="optionCImg" name="optionCImg">
+                            <input type="text" id="optionD" name="optionD" class="form-control input-lg" placeholder="请输入D选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项D图片：</p>
+                            <input type="file" id="optionDImg" name="optionDImg">
+                            <br>
+                            <!--以下是单选的按钮-->
+                            <p>请点击正确答案</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="answer" data-labelauty="A" value="A"></li>
+                                    <li><input type="radio" name="answer" data-labelauty="B" value="B"></li>
+                                    <li><input type="radio" name="answer" data-labelauty="C" value="C"></li>
+                                    <li><input type="radio" name="answer" data-labelauty="D" value="D"></li>
+                                </ul>
+                            </div>
+                            <p>请点击所归属的题型</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="type" data-labelauty="机器人形象" value="1"></li>
+                                    <li><input type="radio" name="type" data-labelauty="机器人定义" value="2"></li>
+                                    <li><input type="radio" name="type" data-labelauty="机器人分类" value="3"></li>
+                                    <li><input type="radio" name="type" data-labelauty="机器人结构" value="4"></li>
+                                    <li><input type="radio" name="type" data-labelauty="稳定性" value="5"></li>
+                                    <li><input type="radio" name="type" data-labelauty="斜面" value="6"></li>
+                                    <li><input type="radio" name="type" data-labelauty="摩擦力" value="7"></li>
+                                    <li><input type="radio" name="type" data-labelauty="力" value="8"></li>
+                                    <li><input type="radio" name="type" data-labelauty="功" value="9"></li>
+                                    <li><input type="radio" name="type" data-labelauty="单摆" value="10"></li>
+                                    <li><input type="radio" name="type" data-labelauty="杠杆" value="11"></li>
+                                    <li><input type="radio" name="type" data-labelauty="轮轴" value="12"></li>
+                                    <li><input type="radio" name="type" data-labelauty="滑轮组" value="13"></li>
+                                    <li><input type="radio" name="type" data-labelauty="传动链" value="14"></li>
+                                    <li><input type="radio" name="type" data-labelauty="风扇" value="15"></li>
+                                </ul>
+                            </div>
+                            <p>请选择题型难度</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="difficulty" data-labelauty="1" value="1"></li>
+                                    <li><input type="radio" name="difficulty" data-labelauty="2" value="2"></li>
+                                    <li><input type="radio" name="difficulty" data-labelauty="3" value="3"></li>
+                                    <li><input type="radio" name="difficulty" data-labelauty="4" value="4"></li>
+                                </ul>
+                            </div>
+                            <button type="button" class="btn btn-warning" id="single" onclick="singleQuestion()">提交</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseThree">
+                            多选请点击
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseThree" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form method="post" enctype="multipart/form-data" id="multipleForm">
+                            {% csrf_token %}
+                            <input type="text" id="titleText1" class="form-control input-lg" placeholder="请输入文字题目" name="titleText">
+                            <p id="titleImgInfo">题目图片：</p>
+                            <input type="file" id="titleImg" name="titleImg">
+                            <input type="text" id="optionA" class="form-control input-lg" name="optionA" placeholder="请输入A选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项A图片：</p>
+                            <input type="file" id="optionAImg" name="optionAImg">
+                            <input type="text" id="optionB" class="form-control input-lg" name="optionB" placeholder="请输入B选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项B图片：</p>
+                            <input type="file" id="optionBImg" name="optionBImg">
+                            <input type="text" id="optionC" class="form-control input-lg" name="optionC" placeholder="请输入C选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项C图片：</p>
+                            <input type="file" id="optionCImg" name="optionCImg">
+                            <input type="text" id="optionD" class="form-control input-lg" name="optionD" placeholder="请输入D选项（如果有文字的话）">
+                            <p id="optionImgInfo">选项D图片：</p>
+                            <input type="file" id="optionDImg" name="optionDImg">
+                            <br>
+
+                            <p>请点击正确答案</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="checkbox" name="answer1" data-labelauty="A" value='A'></li>
+                                    <li><input type="checkbox" name="answer1" data-labelauty="B" value='B'></li>
+                                    <li><input type="checkbox" name="answer1" data-labelauty="C" value='C'></li>
+                                    <li><input type="checkbox" name="answer1" data-labelauty="D" value='D'></li>
+                                </ul>
+                                <input type="text" style="display: none" id="theAnswer" name="theAnswer">
+                            </div>
+
+                            <p>请点击所归属的题型</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="type1" data-labelauty="机器人形象" value="1"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="机器人定义" value="2"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="机器人分类" value="3"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="机器人结构" value="4"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="稳定性" value="5"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="斜面" value="6"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="摩擦力" value="7"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="力" value="8"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="功" value="9"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="单摆" value="10"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="杠杆" value="11"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="轮轴" value="12"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="滑轮组" value="13"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="传动链" value="14"></li>
+                                    <li><input type="radio" name="type1" data-labelauty="风扇" value="15"></li>
+                                </ul>
+                            </div>
+                            <p>请选择题型难度</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="difficulty1" data-labelauty="1" value="1"></li>
+                                    <li><input type="radio" name="difficulty1" data-labelauty="2" value="2"></li>
+                                    <li><input type="radio" name="difficulty1" data-labelauty="3" value="3"></li>
+                                    <li><input type="radio" name="difficulty1" data-labelauty="4" value="4"></li>
+                                </ul>
+                            </div>
+
+                            <button type="button" class="btn btn-warning" id="multiple" onclick="multipleQuestion()">提交</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-warning">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#accordion"
+                           href="#collapseFour">
+                            判断请点击
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseFour" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <form method="post" enctype="multipart/form-data" id="judgeForm">
+                            {% csrf_token %}
+                            <input type="text" id="titleText2" class="form-control input-lg" placeholder="请输入文字题目" name="titleText">
+                            <p id="titleImgInfo">题目图片：</p>
+                            <input type="file" id="titleImg" name="titleImg">
+                            <br>
+                            <p>请点击正确答案</p>
+                            <div id="judgeAnswer">
+                                <ul class="dowebok" id="judgeDowebok">
+                                    <li><input type="radio" name="answer2" data-labelauty="正确" value="A"></li>
+                                    <li><input type="radio" name="answer2" data-labelauty="错误" value="B"></li>
+                                </ul>
+                            </div>
+
+                            <p>请点击所归属的题型</p>
+                                <div id="judgeAnswer">
+                                    <ul class="dowebok" id="judgeDowebok">
+                                        <li><input type="radio" name="type2" data-labelauty="机器人形象" value="1"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="机器人定义" value="2"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="机器人分类" value="3"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="机器人结构" value="4"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="稳定性" value="5"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="斜面" value="6"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="摩擦力" value="7"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="力" value="8"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="功" value="9"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="单摆" value="10"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="杠杆" value="11"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="轮轴" value="12"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="滑轮组" value="13"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="传动链" value="14"></li>
+                                        <li><input type="radio" name="type2" data-labelauty="风扇" value="15"></li>
+                                    </ul>
+                                </div>
+                                <p>请选择题型难度</p>
+                                <div id="judgeAnswer">
+                                    <ul class="dowebok" id="judgeDowebok">
+                                        <li><input type="radio" name="difficulty2" data-labelauty="1" value="1"></li>
+                                        <li><input type="radio" name="difficulty2" data-labelauty="2" value="2"></li>
+                                        <li><input type="radio" name="difficulty2" data-labelauty="3" value="3"></li>
+                                        <li><input type="radio" name="difficulty2" data-labelauty="4" value="4"></li>
+                                    </ul>
+                                </div>
+                            <button type="button" class="btn btn-warning" id="judge" onclick="judgeQuestion()">提交</button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="/static/js/jquery-labelauty.js"></script>
+    </div>
+    <script>
+        function showT(){
+            console.log(this.val())
+        }
+
+        $(function() {
+            $("[data-toggle='popover']").each(function() {
+                var element = $(this);
+                element.popover({
+                    trigger: 'manual',
+                    html: true,
+                    title: function() {
+                        return title();
+                    },
+                    placement: 'bottom',
+                    content: function() {
+                        return content();
+                    }
+                }).on("mouseenter", function() {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function() {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function() {
+                    var _this = this;
+                    setTimeout(function() {
+                        if(!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100000);
+                });
+
+            });
+
+        });
+        function title() {
+            var title = $("<img src='/static/img/account.png' id=\'iconInfo\' style=\'margin-top:2px\'>" + "<p style=\'float:left\'>{{ user }}<p>");
+            return title
+        }
+        function  content()  {
+            var  data  =  $(
+                "<form>" +
+                    "<ul class=\'popoverContent\'>" +
+                        "<li onclick=\'personalCenter()\'><span aria-hidden='true' class='icon_globe'></span>&nbsp;<img src='/static/img/center.png' id=\'iconInfo\' style=\'margin-top:0px\'><font>个人中心</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_piechart'></span>&nbsp;<font>关注:</font>265</li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_search_alt'></span>&nbsp;<font>微博:</font>645</li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_pens_alt'></span>&nbsp;<font>所在地:</font>台湾</li>"+
+                        "<hr>"+
+                        "<button type=\'button\' class=\'btn btn-warning\' data-toggle=\'modal\' data-target=\'#myModal\'>注销</button>"+
+                    "</ul>"+
+                "</form>");
+            return  data;
+        }
+        function  test()  {
+            alert('关注成功');
+        }
+
+        $(function(){
+            $(':input').labelauty();
+        });
+
+
+        function logout() {
+            $.post('/logout/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'user': '{{ info }}',
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    location.href = '/';
+                }
+                else {
+                    alert('登出失败！');
+                }
+            });
+        }
+        function personalCenter() {
+            location.href = '/personalCenter/';
+        }
+
+        function listUser() {
+            location.href='/listUser/';
+        }
+        function setQuestion() {
+            location.href='/setQuestion/';
+        }
+
+        function uploadQuestion() {
+            location.href='/uploadQuestion/';
+        }
+
+        function choosePage() {
+            location.href='/choosePage/';
+        }
+
+        //以下为提交单选题的函数
+        function singleQuestion() {
+            var titleText = $('#titleText').val();
+            var answer = $('input[name="answer"]:checked').val();
+            var type = $('input[name="type"]:checked').val();
+            var difficulty = $('input[name="difficulty"]:checked').val();
+            if (titleText == ''){
+                alert("题目不能为空");
+            }
+            else if (answer == undefined){
+                alert("必须选择题目答案");
+            }
+            else if (type == undefined){
+                alert("必须选择题目种类");
+            }
+            else if (difficulty == undefined){
+                alert("必须选择题目难度");
+            }
+            else {
+                var singleForm = new FormData($('#singleForm')[0]);
+                $.ajax({
+                    url: "/uploadSingle/",
+                    type: "post",
+                    data: singleForm,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    success: function (res) {
+                        alert(res.msg);
+                        {#window.location.reload();#}
+                    }
+                });
+            }
+
+        }
+
+        function multipleQuestion() {
+            var titleText = $('#titleText1').val();
+            var answer = "";
+            $('input[name="answer1"]:checked').each(function(){
+                answer += $(this).val();
+            });
+            var type = $('input[name="type1"]:checked').val();
+            var difficulty = $('input[name="difficulty1"]:checked').val();
+            $("#theAnswer").val(answer);
+            if (titleText == ''){
+                alert("题目不能为空");
+            }
+            else if (answer == undefined){
+                alert("必须选择题目答案");
+            }
+            else if (type == undefined){
+                alert("必须选择题目种类");
+            }
+            else if (difficulty == undefined){
+                alert("必须选择题目难度");
+            }
+            else {
+                var multipleForm = new FormData($('#multipleForm')[0]);
+
+                $.ajax({
+                    url: "/uploadMultiple/",
+                    type: "post",
+                    data: multipleForm,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    success: function (res) {
+                        alert(res.msg);
+                        {#window.location.reload();#}
+                    }
+                });
+            }
+        }
+        function judgeQuestion() {
+            var titleText = $('#titleText2').val();
+            var answer = $('input[name="answer2"]:checked').val();
+            var type = $('input[name="type2"]:checked').val();
+            var difficulty = $('input[name="difficulty2"]:checked').val();
+            if (titleText == ''){
+                alert("题目不能为空");
+            }
+            else if (answer == undefined){
+                alert("必须选择题目答案");
+            }
+            else if (type == undefined){
+                alert("必须选择题目种类");
+            }
+            else if (difficulty == undefined){
+                alert("必须选择题目难度");
+            }
+            else {
+                var jundgeForm = new FormData($('#judgeForm')[0]);
+                $.ajax({
+                    url: "/uploadJundge/",
+                    type: "post",
+                    data: jundgeForm,
+                    dataType: "json",
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    success: function (res) {
+                        alert(res.msg);
+                        {#window.location.reload();#}
+                    }
+                });
+            }
+
+        }
+    </script>
+</body>
+</html>

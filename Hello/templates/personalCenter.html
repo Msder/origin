@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/normalize.css" />
+    <link href="/static/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/general.css">
+    <link rel="stylesheet" href="/static/css/set_7.css">
+    <style>
+        .container-fluid{
+            background-color: #333;
+        }
+        #loginLink{
+            margin-right: 10px;
+        }
+        #iconInfo{
+            float: left;
+            margin-top: 10px;
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+        }
+        .container_odd{
+            background-color: #333;
+            width: 200px;
+            border-radius: 5px;
+            position: absolute;
+            bottom:0;
+            top: 60px;
+        }
+        .set_container{
+            width: 200px;
+        }
+        .set_7_btn-wrapper{
+            width: 200px;
+            {#background-color: #6F6F6F;#}
+            margin-top: 20px;
+        }
+        #set_7_text a{
+            color: #ffffff;
+        }
+
+        .fade.bottom{
+            width: 200px;
+        }
+        .popover-title{
+            height: 50px;
+            line-height: 36px;
+            font-size: 20px;
+            text-align: center;
+            {#text-align: center;#}
+        }
+        .popoverContent{
+            list-style: none;
+            padding-left: 0px;
+        }
+        .popoverContent>li{
+            height: 28px;
+        }
+        .popoverContent>li>font{
+            line-height: 28px;
+        }
+        hr{
+            margin: 5px;
+        }
+
+        /*以下是个人信息*/
+        #personInfo{
+            position: absolute;
+            border-radius: 5px;
+            border: 1px solid #e4ecf3;
+            left: 220px;
+            right: 0;
+            height: 400px;
+            text-align: center;
+        }
+        #personInfo>img{
+            width: 250px;
+            opacity: 0.4;
+        }
+        #personInfo>p{
+            font-weight: bold;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">玛瑞特</a>
+            </div>
+            <div>
+                <!--向左对齐-->
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="navbar-text navbar-left">在线考试</a>
+                <a class="navbar-text navbar-left" href="#">商城</a>
+                <!--向右对齐-->
+                {% if info == 'NoInfo' %}
+                    <a class="navbar-text navbar-right" id="loginLink" href="/login/">登录</a>
+                    <a class="navbar-text navbar-right" href="/register/">注册</a>
+                {% else %}
+{#                    <span><i class="icono-pin navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/settingB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+{#                    <span><i class="icono-user navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/userB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+                {% endif %}
+
+
+            </div>
+        </div>
+    </nav>
+	<div class="container_odd">
+        <div class="set_container">
+            <div class="set_7_btn-wrapper"> <svg height="45" width="150" style="background-color: #444444;">
+                <rect id="set_7_button1" height="45" width="150"  onclick="personalCenter()"></rect>
+                </svg>
+                <div id="set_7_text"> <a href="/personalCenter/">个人信息</a> </div>
+            </div>
+        <!--End of Button 1 -->
+            {% if power == 'admin' %}
+                <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                    <rect id="set_7_button2" height="45" width="150" onclick="listUser()"></rect>
+                    </svg>
+                    <div id="set_7_text"> <a href="/listUser/">权限设置</a> </div>
+                </div>
+            {% endif %}
+        <!--End of Button 2 -->
+            {% if editor == 1 %}
+                <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                    <rect id="set_7_button3" height="45" width="150" onclick="setQuestion()"></rect>
+                    </svg>
+                    <div id="set_7_text"> <a href="/setQuestion/">自定义试卷</a> </div>
+                </div>
+            {% endif %}
+
+            {% if editor == 1 %}
+                <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                    <rect id="set_7_button3" height="45" width="150" onclick="uploadQuestion()"></rect>
+                    </svg>
+                    <div id="set_7_text"> <a href="/uploadQuestion/">上传题目</a> </div>
+                </div>
+            {% endif %}
+            <!--End of Button 3 -->
+            <div class="set_7_btn-wrapper"> <svg height="45" width="150">
+                <rect id="set_7_button4" height="45" width="150" onclick="choosePage()"></rect>
+                </svg>
+                <div id="set_7_text"> <a href="/choosePage/">在线考试</a> </div>
+            </div>
+            <!--End of Button 4 -->
+            <div style="clear:both"></div>
+        </div>
+	</div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center">尊敬的用户:{{ info }}</h4>
+                </div>
+                <div class="modal-body">请确认是否要登出</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="logout()">确定登出</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div id="personInfo">
+        <img src="/static/img/person.png">
+        <p>用户名：{{ user }}</p>
+        <p>权限：{{ power }}</p>
+
+    </div>
+    <script>
+        $(function() {
+            $("[data-toggle='popover']").each(function() {
+                var element = $(this);
+                element.popover({
+                    trigger: 'manual',
+                    html: true,
+                    title: function() {
+                        return title();
+                    },
+                    placement: 'bottom',
+                    content: function() {
+                        return content();
+                    }
+                }).on("mouseenter", function() {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function() {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function() {
+                    var _this = this;
+                    setTimeout(function() {
+                        if(!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100000);
+                });
+
+            });
+
+        });
+        function title() {
+            var title = $("<img src='/static/img/account.png' id=\'iconInfo\' style=\'margin-top:2px\'>" + "<p style=\'float:left\'>{{ user }}<p>");
+            return title
+        }
+        function  content()  {
+            var  data  =  $(
+                "<form>" +
+                    "<ul class=\'popoverContent\'>" +
+                        "<li onclick=\'personalCenter()\'><span aria-hidden='true' class='icon_globe'></span>&nbsp;<img src='/static/img/center.png' id=\'iconInfo\' style=\'margin-top:0px\'><font>个人中心</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_piechart'></span>&nbsp;<font>待定</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_search_alt'></span>&nbsp;<font>待定</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_pens_alt'></span>&nbsp;<font>待定</font></li>"+
+                        "<hr>"+
+                        "<button type=\'button\' class=\'btn btn-warning\' data-toggle=\'modal\' data-target=\'#myModal\'>注销</button>"+
+                    "</ul>"+
+                "</form>");
+            return  data;
+        }
+        function  test()  {
+            alert('关注成功');
+        }
+        function logout() {
+            $.post('/logout/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'user': '{{ info }}',
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    location.href = '/';
+                }
+                else {
+                    alert('登出失败！');
+                }
+            });
+        }
+        function personalCenter() {
+            location.href = '/personalCenter/';
+        }
+
+        function listUser() {
+            location.href='/listUser/';
+        }
+
+        function setQuestion() {
+            location.href='/setQuestion/';
+        }
+
+        function uploadQuestion() {
+            location.href='/uploadQuestion/';
+        }
+
+        function choosePage() {
+            location.href='/choosePage/';
+        }
+
+    </script>
+</body>
+</html>

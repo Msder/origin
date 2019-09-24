@@ -1,0 +1,31 @@
+#listUserForm{
+    position: relative;
+    margin: 10px 10px;
+    left: 250px;
+    width: 80%;
+    height: 100px;
+    border: 1px solid #808080;
+    border-radius: 4px;
+}
+
+#listUserForm:hover{
+    -moz-box-shadow:4px 3px 20px #333333;
+    -webkit-box-shadow:4px 3px 20px #333333;
+    box-shadow:4px 3px 20px #333333;
+}
+
+#listUserForm>div>button{
+    margin-top: 12px;
+    float: right;
+}
+
+
+#listUserForm p{
+    font-size: 20px;
+    margin-top: 10px;
+}
+
+.slider-v2{
+    float: left;
+    margin-top: 0px;
+}

@@ -1,0 +1,46 @@
+#uploadTitle{
+    position: relative;
+    left: 250px;
+}
+
+#titleText{
+    width: 80%;
+}
+
+#titleImgInfo,#optionImgInfo{
+    line-height: 26px;
+    padding: 0 0 10px 0;
+    float: left;
+    margin-bottom: 0;
+    margin-left: 10px;
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.panel-body{
+    text-align: center;
+}
+
+
+.panel-body input{
+    padding-top: 0;
+    margin: 0;
+}
+
+.panel-body>.input-lg{
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.panel-body>form>p{
+    height: 40px;
+}
+
+#accordion{
+    width: 80%;
+}
+
+#accordion>div>div>h4>a{
+    text-align: center;
+}
+

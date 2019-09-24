@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="http://static.geetest.com/static/tools/gt.js"></script>
+    <style>
+        #loginLink{
+            margin-right: 10px;
+        }
+        .panel-default{
+            border-radius: 10px;
+            margin-top: 110px;
+            width: 400px;
+        }
+        body{
+            background-color: rgb(245,245,245);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">玛瑞特</a>
+            </div>
+            <div>
+                <!--向左对齐-->
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="navbar-text navbar-left" href="#">在线考试</a>
+                <a class="navbar-text navbar-left" href="#">商城</a>
+                <!--向右对齐-->
+                <a class="navbar-text navbar-right" id="loginLink" href="/login/">登录</a>
+                <a class="navbar-text navbar-right" href="/login/">注册</a>
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+                <div class="panel panel-default login">
+                    <div class="panel-heading">
+                        <p class="h3">欢迎注册玛瑞特</p>
+                        <p>请在下面的输入框中输入您的用户名和密码</p>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <p class="promptInfo">手机号</p>
+                                <input type="text" class="form-control input-lg phone" name="phone" placeholder="输入您的常用手机号">
+                            </div>
+                            <div class="form-group">
+                                <p class="promptInfo">用户名</p>
+                                <input type="text" class="form-control input-lg user" name="user" placeholder="设置您的用户名">
+                            </div>
+                            <div class="form-group">
+                                <p class="promptInfo">密码</p>
+                                <input type="password" class="form-control input-lg pwd" name="pwd" placeholder="密码，不超过20位的非中文字符">
+                            </div>
+                            <div class="form-group">
+                                <p class="promptInfo">确认密码</p>
+                                <input type="password" class="form-control input-lg conform" name="conformPwd" placeholder="确认密码">
+                            </div>
+                            <div class="form-group popup-div">
+                                <!-- 放置极验的滑动验证码 -->
+                                <span id="wait">验证码加载中...</span>
+                                <div id="popup-captcha"></div>
+
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-block btn-primary btn-lg" id="login-button" disabled title="请完成人机识别验证" onclick="uploadData()">登录</button>
+                            </div>
+                            <a href="/login/">登陆</a>
+                            |
+                            <a href="">找回密码</a>
+                            <strong id="error" class="pull-right"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        var handlerPopup = function (captchaObj) {
+            // appendTo方法用于将验证按钮插到宿主页面，使其显示在页面上。
+            captchaObj.appendTo('#popup-captcha');
+            // onReady监听验证按钮的 DOM 生成完毕事件
+            captchaObj.onReady(function () {
+                $("#wait").attr('class', 'hidden');
+            });
+
+            // onSuccess:监听验证成功事件，进行二次验证
+            captchaObj.onSuccess(function () {
+                $("#login-button").removeAttr('disabled');
+                $("#login-button").removeAttr('title');
+            });
+
+            $("#login-button").click(function () {
+                // getValidate:获取用户进行成功验证(onSuccess)所得到的结果，该结果用于进行服务端 SDK 进行二次验证。
+                var validate = captchaObj.getValidate();
+                if (!validate) {
+                    return 0;
+                } else {
+                    $.ajax({
+                        url: "/login/", // 进行二次验证
+                        type: "post",
+                        dataType: "json",
+                        data: {
+                            username: $('input[name="user"]').val(),
+                            password: $('input[name="pwd"]').val(),
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val(),
+
+                            geetest_challenge: validate.geetest_challenge,
+                            geetest_validate: validate.geetest_validate,
+                            geetest_seccode: validate.geetest_seccode,
+                        },
+                        success: function (data) {
+                            if (data.status) {
+                                $('#error').text(data.msg);
+                                captchaObj.reset();  // 让验证回到初始状态
+                            } else {
+                                location.href = data.msg;
+                            }
+                        },
+                    });
+                }
+            });
+        };
+
+        // 当input框获取焦点时将之前的错误清空
+        $('input[name="user"],input[name="pwd"]').focus(function () {
+            // 将之前的错误清空
+            $('#error').text('');
+        });
+
+        // 验证开始需要向网站主后台获取id，challenge，success（是否启用failback）
+        $.ajax({
+            url: "/pc-geetest/register?t=" + (new Date()).getTime(), // 加随机数防止缓存
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                // 使用initGeetest接口
+                // 参数1：配置参数
+                // 参数2：回调，回调的第一个参数验证码对象，之后可以使用它做appendTo之类的事件
+                initGeetest({
+                    gt: data.gt,  // 验证 id，极验后台申请得到
+                    challenge: data.challenge,  // 验证流水号，后服务端 SDK 向极验服务器申请得到
+                    product: "popup", // 产品形式，包括：float，embed，popup。注意只对PC版验证码有效
+                    offline: !data.success, // 表示用户后台检测极验服务器是否宕机，一般不需要关注
+                    width: '100%',  // 设置按钮的长度
+                    // 更多配置参数请参见：http://www.geetest.com/install/sections/idx-client-sdk.html#config
+                }, handlerPopup);
+            },
+        });
+
+        function uploadData() {
+            var phone = $('input[name="phone"]').val();
+            var user = $('input[name="user"]').val();
+            var pwd = $('input[name="pwd"]').val();
+            var conformPwd = $('input[name="conformPwd"]').val();
+            if(phone=='' || phone.length != 11){
+                $('.phoneTips').remove();
+                $('.phone').after('<p class="phoneTips">手机号位数错误</p>');
+                $('.phone').css('border-color','red');
+            }
+            else if(user==''){
+                $('.userTips').remove();
+                $('.user').after('<p class="userTips">用户名不能为空</p>');
+                $('.user').css('border-color','red');
+            }
+            else if(pwd==''){
+                $('.pwdTips').remove();
+                $('.pwd').after('<p class="pwdTips">密码不能为空</p>');
+                $('.pwd').css('border-color','red');
+            }
+            else if(conformPwd==''){
+                $('.conformPwdTips').remove();
+                $('.conform').after('<p class="conformPwdTips">确认密码不能为空</p>');
+                $('.conform').css('border-color','red');
+            }
+            else{
+                if(conformPwd!=pwd){
+                    $('.conformPwdTips').remove();
+                    $('.conform').after('<p class="conformPwdTips">两次密码不匹配</p>');
+                    $('.conform').css('border-color','red');
+                }
+                else{
+                    $.post('/uploadRegisterData/',{
+                        'csrfmiddlewaretoken':'{{ csrf_token }}',
+                        {#'image': $('#image').files,#}
+                        'phone': phone,
+                        'user': user,
+                        'pwd': pwd,
+                    }, function (data) {
+                        if (data.msg === 'OK'){
+                            alert(data.msg);
+                            location.href = '/';
+                        }
+                        else {
+                            $('.tips').remove();
+                            $('#login-button').after('<p class="tips">输入仍有问题</p>');
+                        }
+                    });
+                }
+            }
+        }
+        $('.phone').bind('input propertychange',function () {
+            if ($('.phone').val() != ''){
+                $('.phoneTips').remove();
+                $('.phone').css('border-color','#ccc');
+                if ($('.phone').val().length != 11){
+                    $('.phoneTips').remove();
+                    $('.phone').after('<p class="phoneTips">手机号位数错误（十一位）</p>');
+                    $('.phone').css('border-color','red');
+                }
+                else {
+                    $('.phoneTips').remove();
+                    $('.phone').css('border-color','#ccc');
+                }
+            }
+            {#console.log($(this).val());#}
+        });
+        $('.user').bind('input propertychange',function () {
+            $.post('/checkUser/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'user': $(this).val(),
+            }, function (data) {
+                if (data.msg === 'Used'){
+                    $('.userTips').remove();
+                    $('.user').after('<p class="userTips">用户名已经被使用</p>');
+                    $('.user').css('border-color','red');
+                }
+                else {
+                    $('.userTips').remove();
+                    $('.user').css('border-color','#ccc');
+                }
+            });
+            {#console.log($(this).val());#}
+        });
+
+
+    </script>
+
+
+</body>
+</html>

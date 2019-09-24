@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/css/jquery-labelauty.css">
+    <style>
+        /*body的设置也是滚动监听的*/
+        body{
+            position: relative;
+        }
+
+
+        .container-fluid{
+            background-color: #333;
+        }
+        #loginLink{
+            margin-right: 10px;
+        }
+        #iconInfo{
+            float: left;
+            margin-top: 10px;
+            width: 28px;
+            height: 28px;
+            margin-right: 8px;
+        }
+
+        .fade.bottom{
+            width: 200px;
+        }
+        .popover-title{
+            height: 50px;
+            line-height: 36px;
+            font-size: 20px;
+            text-align: center;
+            {#text-align: center;#}
+        }
+        .popoverContent{
+            list-style: none;
+            padding-left: 0px;
+        }
+        .popoverContent>li{
+            height: 28px;
+        }
+        .popoverContent>li>font{
+            line-height: 28px;
+        }
+        hr{
+            margin: 5px;
+        }
+
+        /*以下是题目特性*/
+        #questions{
+            margin: 0 auto;
+            width: 40%;
+        }
+        #Qarea{
+            margin-top: 60px;
+        }
+
+        #Qarea:before{
+            content:"";
+            display:table;
+        }
+        #titleText{
+            margin-top: 10px;
+            font-size: 20px;
+        }
+        #Qarea>div{
+            margin-left: 20px;
+        }
+        #Qarea>div>p{
+            font-size: 18px;
+        }
+
+        /*以下是单选和多选框的特有性质*/
+        #questionDowebok{
+            list-style-type: none;
+        }
+
+        #questionDowebok li{
+            display: inline-block;
+            margin: 10px 0;
+        }
+        input.labelauty + label {
+            font: 12px "Microsoft Yahei";
+        }
+
+        #uploadAnswer {
+            text-align: center;
+        }
+        #uploadAnswer>button{
+            margin: 0 auto;
+            width: 300px;
+        }
+
+        /*时钟的属性*/
+        #time{
+            position: fixed;
+            {#margin: 0 auto;#}
+            width: 200px;
+            height: 160px;
+            left: 10px;
+            background-color: #eeeeee;
+            border:1px solid #e6e6e6;
+            border-radius: 5px;
+        }
+        #time p:first-child{
+            margin-top: 20px;
+        }
+        #time p{
+            text-align: center;
+        }
+        #timeShow{
+            font-size: 32px;
+        }
+
+        /*题目外观*/
+        #Qarea{
+            background-color: #f7f7f7;
+            border-radius: 5px;
+            -moz-box-shadow:7px 2px 15px #878787;
+            -webkit-box-shadow:7px 2px 15px #878787;
+            box-shadow:7px 2px 15px #878787;
+        }
+
+        #worryInfo{
+            color: red;
+        }
+
+        /*成绩css*/
+        #score{
+            margin: 0 auto;
+            width: 300px;
+            height: 200px;
+            background-color: #E7E7E7;
+            border-radius: 5px;
+        }
+
+        #score:before{
+            content:"";
+            display:table;
+        }
+
+        #score p{
+            text-align: center;
+        }
+
+        #scoreInfo{
+            margin-top: 40px ;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        #scoreShow{
+            font-size: 40px;
+            font-weight: bolder;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/">玛瑞特</a>
+            </div>
+            <div>
+                <!--向左对齐-->
+                <ul class="nav navbar-nav navbar-left">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            Java
+                            <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">jmeter</a></li>
+                            <li><a href="#">EJB</a></li>
+                            <li><a href="#">Jasper Report</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">分离的链接</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">另一个分离的链接</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <a class="navbar-text navbar-left">在线考试</a>
+                <a class="navbar-text navbar-left" href="#">商城</a>
+                {% if editor == 1 %}
+                    <a class="navbar-text navbar-left" href="/editInfo/">编辑</a>
+                {% endif %}
+                <!--向右对齐-->
+                {% if info == 'NoInfo' %}
+                    <a class="navbar-text navbar-right" id="loginLink" href="/login/">登录</a>
+                    <a class="navbar-text navbar-right" href="/register/">注册</a>
+                {% else %}
+{#                    <span><i class="icono-pin navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/settingB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+{#                    <span><i class="icono-user navbar-right" data-toggle="popover"></i></span>#}
+                    <img src="/static/img/userB.png" class="navbar-right" id="iconInfo" data-toggle="popover">
+                {% endif %}
+
+                <form class="navbar-form navbar-right" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel" style="text-align: center">尊敬的用户:{{ user }}</h4>
+                </div>
+                <div class="modal-body">请确认是否要登出</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" onclick="logout()">确定登出</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    {% if score != 999 %}
+        <div id="score">
+            <p id="scoreInfo">您的分数：</p>
+            <p id="scoreShow">{{ score }}</p>
+        </div>
+    {% endif %}
+
+    {% if worry != 'A' %}
+        <input type="text" id="worryQuestion" value="{{ worry }}" style="display: none">
+        <input type="text" id="worryQuestionAnswer" value="{{ answer }}" style="display: none">
+    {% endif %}
+
+    {% if score == 999 %}
+        <div id="time">
+            <p>剩余时间：</p>
+            <p id="timeShow"></p>
+            <p>时间到自动交卷</p>
+        </div>
+    {% endif %}
+
+    <div id="questions">
+        {% for i in questions %}
+            <div id="Qarea" class="question{{ forloop.counter }}">
+                {% if i.0 == 1 %}
+                    <p id="titleText">{{ forloop.counter }}.{{ i.1 }}(单选题，2分)</p>
+                {% endif %}
+
+                {% if i.0 == 2 %}
+                    <p id="titleText">{{ forloop.counter }}.{{ i.1 }}(多选题，4分)</p>
+                {% endif %}
+
+                {% if i.0 == 3 %}
+                    <p id="titleText">{{ forloop.counter }}.{{ i.1 }}(判断题，2分)</p>
+                {% endif %}
+
+    {#            titleImg,optiona,optionaImg,optionb,optionbImg,optionc,optioncImg,optiond,optiondImg#}
+                {% if i.2 != 'None' %}
+                    <img src="{{ i.2 }}">
+                {% endif %}
+                <div id="optionA">
+                    {% if i.3 != '' or i.4 != 'None'%}
+                        {% if i.3 != 'None' %}
+                            <p>A.{{ i.3 }}</p>
+                        {% endif %}
+
+                    {% endif %}
+                    {% if i.4 != 'None' %}
+                        <img src="{{ i.4 }}">
+                    {% endif %}
+                </div>
+
+                <div id="optionB">
+                    {% if i.5 != '' or i.6 != 'None' %}
+                        {% if i.5 != 'None' %}
+                            <p>B.{{ i.5 }}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if i.6 != 'None' %}
+                        <img src="{{ i.6 }}">
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if i.7 != '' or i.8 != 'None'%}
+                        {% if i.7 != 'None' %}
+                            <p>C.{{ i.7 }}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if i.8 != 'None' %}
+                        <img src="{{ i.8 }}">
+                    {% endif %}
+                </div>
+                <div>
+                    {% if i.9 != '' or i.10 != 'None'%}
+                        {% if i.9 != 'None' %}
+                            <p>D.{{ i.9 }}</p>
+                        {% endif %}
+                    {% endif %}
+                    {% if i.10 != 'None' %}
+                        <img src="{{ i.10 }}">
+                    {% endif %}
+                </div>
+                {% if i.0 == 1 %}
+                    <div id="singleAnswer">
+                        <ul class="dowebok" id="questionDowebok">
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="A" value="A"></li>
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="B" value="B"></li>
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="C" value="C"></li>
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="D" value="D"></li>
+                        </ul>
+                    </div>
+                {% elif i.0 == 2 %}
+                    <div id="multipleAnswer">
+                        <ul class="dowebok" id="questionDowebok">
+                            <li><input type="checkbox" name="answer{{ forloop.counter }}" data-labelauty="A" value='A'></li>
+                            <li><input type="checkbox" name="answer{{ forloop.counter }}" data-labelauty="B" value='B'></li>
+                            <li><input type="checkbox" name="answer{{ forloop.counter }}" data-labelauty="C" value='C'></li>
+                            <li><input type="checkbox" name="answer{{ forloop.counter }}" data-labelauty="D" value='D'></li>
+                        </ul>
+                        <input type="text" style="display: none" id="theAnswer" name="theAnswer">
+                    </div>
+                {% elif i.0 == 3 %}
+                    <div id="judgeAnswer">
+                        <ul class="dowebok" id="questionDowebok">
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="正确" value="A"></li>
+                            <li><input type="radio" name="answer{{ forloop.counter }}" data-labelauty="错误" value="B"></li>
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+
+        {% endfor %}
+    </div>
+    {% if score == 999 %}
+        <div id="uploadAnswer">
+            <button type="button" class="btn btn-warning" onclick="uploadAnswer()">提交</button>
+        </div>
+    {% endif %}
+
+    <script src="/static/js/jquery-labelauty.js"></script>
+
+    <script>
+        $(function() {
+            $("[data-toggle='popover']").each(function() {
+                var element = $(this);
+                element.popover({
+                    trigger: 'manual',
+                    html: true,
+                    title: function() {
+                        return title();
+                    },
+                    placement: 'bottom',
+                    content: function() {
+                        return content();
+                    }
+                }).on("mouseenter", function() {
+                    var _this = this;
+                    $(this).popover("show");
+                    $(this).siblings(".popover").on("mouseleave", function() {
+                        $(_this).popover('hide');
+                    });
+                }).on("mouseleave", function() {
+                    var _this = this;
+                    setTimeout(function() {
+                        if(!$(".popover:hover").length) {
+                            $(_this).popover("hide")
+                        }
+                    }, 100000);
+                });
+
+            });
+            
+        });
+        
+        
+        $(function() {
+            var totalTime = 200;
+            getTime();
+            var checkTime = setInterval(function() {
+                getTime();
+            }, 1000);
+
+
+            function getTime() {
+                totalTime -= 1;
+                if(totalTime == 0){
+                    alert('超时自动提交');
+                    $('#uploadAnswer').remove();
+                    clearInterval(checkTime);
+                    $('#time').remove();
+                    timeOverUpload();
+                    return;
+                }
+                if($('#time').length==0){
+                    clearInterval(checkTime);
+                    return;
+                }
+                var second = totalTime % 60;
+                var hour = Math.floor((totalTime-second)/3600);
+                var minute = (totalTime-second-hour*3600)/60;
+                //console.log(totalTime);
+                str = hour+':'+minute+':'+second;
+                $('#timeShow').html(str);
+            }
+        });
+
+        $(function () {
+            if($('#worryQuestion').length > 0){
+                var worryStr = $('#worryQuestion').val();
+                var worryLst = worryStr.split('-');
+                var answerStr = $('#worryQuestionAnswer').val();
+                var answerLst = answerStr.split('-');
+                for(var i = 0;i<worryLst.length;i++){
+                    worryLst[i] = parseInt(worryLst[i]);
+                    $('.question'+(worryLst[i]+1)).css('border','1px solid red');
+                    if(i>=34){
+                        if(answerLst[i]=='A'){
+                            $('.question'+(worryLst[i]+1)).append("<p id='worryInfo'>正确答案为：正确</p>");
+                        }
+                        else {
+                            $('.question'+(worryLst[i]+1)).append("<p id='worryInfo'>正确答案为：错误</p>");
+                        }
+                    }
+                    else {
+                        $('.question'+(worryLst[i]+1)).append("<p id='worryInfo'>正确答案为："+answerLst[i]+"</p>");
+                    }
+                }
+            }
+        });
+
+        function title() {
+            var title = $("<img src='/static/img/account.png' id=\'iconInfo\' style=\'margin-top:2px\'>" + "<p style=\'float:left\'>{{ user }}<p>");
+            return title
+        }
+        function  content()  {
+            var  data  =  $(
+                "<form>" +
+                    "<ul class=\'popoverContent\'>" +
+                        "<li onclick=\'personalCenter()\'><span aria-hidden='true' class='icon_globe'></span>&nbsp;<img src='/static/img/center.png' id=\'iconInfo\' style=\'margin-top:0px\'><font>个人中心</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_piechart'></span>&nbsp;<font>待定</font>待定</li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_search_alt'></span>&nbsp;<font>待定</font></li>"+
+                        "<hr>"+
+                        "<li><span aria-hidden='true' class='icon_pens_alt'></span>&nbsp;<font>待定</font>待定</li>"+
+                        "<hr>"+
+                        "<button type=\'button\' class=\'btn btn-warning\' data-toggle=\'modal\' data-target=\'#myModal\'>注销</button>"+
+                    "</ul>"+
+                "</form>");
+            return  data;
+        }
+        function  test()  {
+            alert('关注成功');
+        }
+        function logout() {
+            $.post('/logout/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'user': '{{ info }}',
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    location.href = '/';
+                }
+                else {
+                    alert('登出失败！');
+                }
+            });
+        }
+        function personalCenter() {
+            location.href = 'personalCenter/';
+        }
+
+        $(function(){
+            $(':input').labelauty();
+        });
+
+        function timeOverUpload() {
+            var answerArr = [];
+            for(var i=1;i<=45;i++){
+                var str1 = 'answer'+i;
+                {#console.log(str1);#}
+                {#var answer = $('input[name="'+ str1 +'"]:checked').val();#}
+                var id = $('input[name="'+ str1 +'"]').parent().parent().parent().attr('id');
+                {#console.log(answer);#}
+                if(id != 'multipleAnswer'){
+                    var answer = $('input[name="'+ str1 +'"]:checked').val();
+                    if(answer == undefined || answer == ''){
+                        answerArr.push('E');
+                    }
+                    else{
+                        answerArr.push(answer);
+                    }
+
+                }
+                else {
+                    var answer = "";
+                    $('input[name="'+ str1 +'"]:checked').each(function(){
+                        answer += $(this).val();
+                    });
+                    if(answer == undefined || answer == ''){
+                        answerArr.push('E');
+                    }
+                    else{
+                        answerArr.push(answer);
+                    }
+
+                }
+            }
+            console.log(answerArr);
+            var urlStr = window.location.href;
+            urlStr = urlStr.substring(0,urlStr.length-1);
+            var urlLst = urlStr.split('/');
+            var pageID = urlLst[urlLst.length-1];
+            var theAnswerStr = answerArr.join('-');
+            $.post('/uploadAnswer/',{
+                'csrfmiddlewaretoken':'{{ csrf_token }}',
+                'pageID': pageID,
+                'answer': theAnswerStr,
+            }, function (data) {
+                if (data.msg === 'OK'){
+                    alert('成功');
+                    for(var i=0;i<data.worry.length;i++){
+                        $('#time').remove();
+                        $('.question'+(data.worry[i][0]+1)).css('border','1px solid red');
+                        console.log(data.worry[i][0]+1,data.worry[i][1])
+                        if(data.worry[i][0]>=34){
+                            if(data.worry[i][1]=='A'){
+                                $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为：正确</p>");
+                            }
+                            else {
+                                $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为：错误</p>");
+                            }
+                        }
+                        else {
+                            $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为："+data.worry[i][1]+"</p>");
+                        }
+
+
+                    }
+
+                }
+                else {
+                    alert('上传答案失败');
+                }
+            });
+        }
+
+        function uploadAnswer() {
+            var answerArr = [];
+            var needtoAnswer = [];
+            for(var i=1;i<=45;i++){
+                var str1 = 'answer'+i;
+                {#console.log(str1);#}
+                {#var answer = $('input[name="'+ str1 +'"]:checked').val();#}
+                var id = $('input[name="'+ str1 +'"]').parent().parent().parent().attr('id');
+                {#console.log(answer);#}
+                if(id != 'multipleAnswer'){
+                    var answer = $('input[name="'+ str1 +'"]:checked').val();
+                    if(answer == undefined || answer == ''){
+                        needtoAnswer.push(i);
+                    }
+                    answerArr.push(answer);
+                }
+                else {
+                    var answer = "";
+                    $('input[name="'+ str1 +'"]:checked').each(function(){
+                        answer += $(this).val();
+                    });
+                    if(answer == undefined || answer == ''){
+                        needtoAnswer.push(i);
+                    }
+                    answerArr.push(answer);
+                }
+            }
+            var urlStr = window.location.href;
+            urlStr = urlStr.substring(0,urlStr.length-1);
+            var urlLst = urlStr.split('/');
+            var pageID = urlLst[urlLst.length-1];
+            if(needtoAnswer.length>0){
+                alert(needtoAnswer.join(',')+'题未做')
+            }
+            else {
+                var theAnswerStr = answerArr.join('-');
+
+                $.post('/uploadAnswer/',{
+                    'csrfmiddlewaretoken':'{{ csrf_token }}',
+                    'pageID': pageID,
+                    'answer': theAnswerStr,
+                }, function (data) {
+                    if (data.msg === 'OK'){
+                        alert('成功');
+                        $('#uploadAnswer').remove();
+                        for(var i=0;i<data.worry.length;i++){
+                            $('#time').remove();
+                            $('.question'+(data.worry[i][0]+1)).css('border','1px solid red');
+                            console.log(data.worry[i][0]+1,data.worry[i][1])
+                            if(data.worry[i][0]>=34){
+                                if(data.worry[i][1]=='A'){
+                                    $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为：正确</p>");
+                                }
+                                else {
+                                    $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为：错误</p>");
+                                }
+                            }
+                            else {
+                                $('.question'+(data.worry[i][0]+1)).append("<p id='worryInfo'>正确答案为："+data.worry[i][1]+"</p>");
+                            }
+
+
+                        }
+
+                    }
+                    else {
+                        alert('上传答案失败');
+                    }
+                });
+            }
+
+        }
+    </script>
+</body>
+</html>
